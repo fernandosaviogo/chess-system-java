@@ -29,5 +29,14 @@ public class Board {
 	public void setColumns(int columns) {
 		this.columns = columns;
 	}
-
+	
+	// Metodo retorna a matrix na linha e coluna digitadas 
+	public Piece piece(int row, int column) {
+		return pieces[row][column];
+	}
+	
+	// Metodo de sobrecarga para retornar a posição da peça
+	public Piece piece(Position position) {
+		return pieces[position.getRow()][position.getColumn()];
+	}
 }
