@@ -2,6 +2,7 @@ package chess;
 
 import boardgame.Board;
 import boardgame.Piece;
+import boardgame.Position;
 
 public abstract class ChessPiece extends Piece{
 	
@@ -16,6 +17,12 @@ public abstract class ChessPiece extends Piece{
 	// Metodo Gets e Sets (Só possui o Get porque a cor não pode ser alterada)
 	public Color getColor() {
 		return color;
+	}
+	
+	// Metodo para verificar se a uma peça do oponente na posição
+	protected boolean isThereOpponentPiece(Position position) {
+		ChessPiece p = (ChessPiece)getBoard().piece(position);
+		return p != null && p.getColor() != color;
 	}
 	
 }
