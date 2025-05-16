@@ -57,7 +57,7 @@ public class Bishop extends ChessPiece {
 		p.setValues(position.getRow() + 1, position.getColumn() - 1); // O +1 esta verificando a casa abaixo da peça
 		while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
 			mat[p.getRow()][p.getColumn()] = true; // indica que a casa esta vazia e a peça pode ser movida
-			p.setValues(p.getRow() + 1, p.getColumn() + 1); // Realiza o movimento da peça para casa vazia abaixo
+			p.setValues(p.getRow() + 1, p.getColumn() - 1); // Realiza o movimento da peça para casa vazia abaixo
 		}
 		if (getBoard().positionExists(p) && isThereOpponentPiece(p)) { // Verifica se a casa tem uma peça do adversario
 			mat[p.getRow()][p.getColumn()] = true; // indica que a peça pode ser movida
