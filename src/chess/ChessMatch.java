@@ -1,6 +1,7 @@
 package chess;
 
 import java.nio.channels.IllegalSelectorException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class ChessMatch {
 	private boolean check;
 	private boolean checkMate;
 	private ChessPiece enPassantVulnerable; // Movimento especial do Pião(Pawn)
+	private ChessPiece promoted; // Movimento espeical do pião(Pawn) a chegar no final do tabuleiro
 
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -54,6 +56,10 @@ public class ChessMatch {
 
 	public ChessPiece getEnPassantVulnerable() {
 		return enPassantVulnerable;
+	}
+	
+	public ChessPiece getPromoted() {
+		return promoted;
 	}
 
 	// Metodos de movimentação do jogo
@@ -88,6 +94,15 @@ public class ChessMatch {
 		}
 
 		ChessPiece movedPiece = (ChessPiece) board.piece(target);
+		
+		// Movimento espeical do pião(Pawn) a chegar no final do tabuleiro
+		promoted = null;
+		if (movedPiece instanceof Pawn) {
+			if ((movedPiece.getColor() == Color.WHITE && target.getRow() == 0) || (movedPiece.getColor() == Color.BLACK && target.getRow() == 7)) {
+				promoted = (ChessPiece)board.piece(target);
+				promoted = replacePromotedPiece("Q");
+			}
+		}
 
 		check = (testCheck(opponent(currentPlayer))) ? true : false;
 
@@ -106,6 +121,32 @@ public class ChessMatch {
 		}
 
 		return (ChessPiece) capturedPiece;
+	}
+	
+	// Movimento espeical do pião(Pawn) a chegar no final do tabuleiro
+	public ChessPiece replacePromotedPiece(String type) {
+		if (promoted == null) {
+			throw new IllegalStateException("There is no piece to be promoted");
+		}
+		if (!type.equals("B") && !type.equals("N") && !type.equals("R") && !type.equals("Q")) {
+			throw new InvalidParameterException("Invalid type for promotion");
+		}
+		Position pos = promoted.getChessPosition().toPosition();
+		Piece p = board.removePiece(pos);
+		piecesOnTheBoard.remove(p);
+		
+		ChessPiece newPiece = newPiece(type, promoted.getColor());
+		board.placePiece(newPiece, pos);
+		piecesOnTheBoard.add(newPiece);
+		
+		return newPiece;
+	}
+	
+	private ChessPiece newPiece(String type, Color color) {
+		if (type.equals("B")) return new Bishop(board, color);
+		if (type.equals("N")) return new Knight(board, color);
+		if (type.equals("Q")) return new Queen(board, color);
+		return new Rook(board, color);
 	}
 
 	// Metodo para mover a peça
